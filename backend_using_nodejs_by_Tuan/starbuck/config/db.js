@@ -9,7 +9,7 @@ module.exports = function() {
          */
         save(order) {
             order.order_id = crypto.randomBytes(20).toString('hex'); // fast enough for our purpose
-            this.movieList.push(order);
+            this.orderList.push(order);
             return 1;
         },
         /*
@@ -46,8 +46,8 @@ module.exports = function() {
                 return element.order_id === order_id;
             });
             if(orderIndex !== -1) {
-                this.orderList[orderIndex].title = order.title;
-                this.orderList[orderIndex].year = order.year;
+                this.orderList[orderIndex].location = order.location;
+                this.orderList[orderIndex].items = order.items;
                 return 1;
             }else {
                 return 0;
