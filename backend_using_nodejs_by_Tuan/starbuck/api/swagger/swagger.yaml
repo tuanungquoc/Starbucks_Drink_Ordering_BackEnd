@@ -1,0 +1,234 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /order:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: order
+    post:
+      description: place an order
+      # used as the method name of the controller
+      operationId: placeOrder
+      parameters:
+        - name: order
+          in: body
+          description: order properties
+          required: true
+          schema:
+            $ref: "#/definitions/Order"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /orders:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: orders
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: getListOfOrders
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /order/{order_id}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: order
+    get:
+      operationId: getOrder
+      description: get all current orders
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOrdersListResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Delete an order
+      # used as the method name of the controller
+      operationId: cancelOrder
+      parameters:
+        - name: order_id
+          description: Order id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /order/{order_id}/pay:
+      # binds a127 app logic to a route
+      x-swagger-router-controller: payment
+      post:
+        description: Pay my order
+        # used as the method name of the controller
+        operationId: payOrder
+        parameters:
+          - name: order_id
+            description: Order id
+            type: string
+            in: path
+            required: true
+        responses:
+          responses:
+            "200":
+              description: Success
+              schema:
+                $ref: "#/definitions/GeneralResponse"
+            default:
+              description: Error
+              schema:
+                $ref: "#/definitions/ErrorResponse"
+
+  /hello:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  Order:
+    type: object
+    properties:
+      location:
+        type: string
+        description: location where you place order
+      items:
+        type: array
+        description: list of order items
+        items:
+          type: object
+          properties:
+            qty:
+              type: number
+              description: quantity of order item
+            name:
+              type: string
+              description: name of order item
+            milk:
+              type: string
+              description: name of type of milk
+            size:
+              type: string
+              description: size of order
+    required:
+      - title
+      - year
+  GetOrdersListResponse:
+    required:
+      - orders
+    properties:
+      # The array of movies
+      orders:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            location:
+              type: string
+            message:
+              type: string
+            orderitems:
+              type: array
+              items:
+                type: object
+                properties:
+                  qty:
+                    type: number
+                  name:
+                    type: string
+                  milk:
+                    type: string
+                  size:
+                    type: string
+  GeneralResponse:
+    type: object
+    properties:
+      success:
+        type: number
+        description: returns 1 if successful
+      description:
+        type: string
+        description: a short comment
+    required:
+      - success
+      - description
+  HelloWorldResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
