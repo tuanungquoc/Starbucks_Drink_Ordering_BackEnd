@@ -20,7 +20,7 @@ produces:
 paths:
   /order:
     # binds a127 app logic to a route
-    x-swagger-router-controller: order
+    x-swagger-router-controller: ordercontroller
     post:
       description: place an order
       # used as the method name of the controller
@@ -43,7 +43,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /orders:
     # binds a127 app logic to a route
-    x-swagger-router-controller: orders
+    x-swagger-router-controller: orderscontroller
     get:
       description: Returns all orders that not been proccessed
       # used as the method name of the controller
@@ -61,7 +61,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /order/{order_id}:
     # binds a127 app logic to a route
-    x-swagger-router-controller: order
+    x-swagger-router-controller: ordercontroller
     get:
       operationId: getOrder
       parameters:
@@ -101,7 +101,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /order/{order_id}/pay:
       # binds a127 app logic to a route
-      x-swagger-router-controller: payment
+      x-swagger-router-controller: paymentcontroller
       post:
         description: Pay my order
         # used as the method name of the controller

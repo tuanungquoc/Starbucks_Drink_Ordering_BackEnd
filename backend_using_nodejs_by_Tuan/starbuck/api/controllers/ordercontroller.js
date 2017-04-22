@@ -1,11 +1,24 @@
 // Include our "db"
 var db = require('../../config/db')();
+var Order = require('../models/order');
+
 // Exports all the functions to perform on the db
 module.exports = {placeOrder, getOrder, cancelOrder};
 
 //POST /placeOrder
 function placeOrder(req, res, next) {
-    res.json({success: db.save(req.body), description: "Order added to the list!"});
+    console.log(req.body);
+    var myOrder = new Order();
+    myOrder.location = req.body.location;
+    myOrder.items = req.body.items;
+    //console.log(req.body);
+    console.log(myOrder);
+    myOrder.save(function(err) {
+                                  if (err) throw err;
+                                  console.log('User saved successfully!');
+                                  return 1;
+                                });
+    res.json({success: 1, description: "Order added to the list!"});
 }
 //GET /order/{order_id} operationId
 function getOrder(req, res, next) {

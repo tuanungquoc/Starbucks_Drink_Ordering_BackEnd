@@ -2,7 +2,12 @@
 
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
+var mongoose = require('mongoose');
+var configDB = require('./config/database.js');
+
 module.exports = app; // for testing
+mongoose.Promise = global.Promise;
+mongoose.connect(configDB.url); // connect to our database
 
 var config = {
   appRoot: __dirname // required config
