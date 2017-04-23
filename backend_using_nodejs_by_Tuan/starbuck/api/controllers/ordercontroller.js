@@ -21,11 +21,15 @@ function placeOrder(req, res, next) {
   //  console.log(myOrder);
     myOrder.save(function(err) {
         if (err){
-          res.status(204).send();
+          res.status(500).json(
+            {
+              "status": "error",
+              "message": "Cannot place order"
+            }
+          );
+        }else{
+          res.json(myOrder);
         }
-        res.json(myOrder);
-        console.log('User saved successfully!');
-        return 1;
     });
 
 
@@ -35,11 +39,13 @@ function getOrder(req, res, next) {
     var order_id = req.swagger.params.order_id.value; //req.swagger contains the path parameters
     Order.findOne({_id:order_id}, function(err, order){
                 if (err){
-                    console.log("errr",err);
-                    res.status(204).send();
-                    //return done(err, null);
+                  res.status(404).json(
+                    {
+                      "status": "error",
+                      "message": "Order not found"
+                    }
+                  );
                 }else{
-                    console.log(order);
                     res.json(order);
                 }
 
@@ -51,32 +57,86 @@ function changeOrder(req, res, next) {
     var order_id = req.swagger.params.order_id.value; //req.swagger contains the path parameters
     var newOrder = req.body;
     Order.findOne({_id:order_id}, function(err, order){
-                if (err){
-
-                    res.status(204).send();
-                    //return done(err, null);
-                }else{
-                    order.location = newOrder.location;
-                    order.items = newOrder.items;
-                    order.save(function(er) {
-                      if (er)
-                        res.status(204).send();
-                      else
-                        res.json(order);
-                    });
-                }
+          if (err){
+            res.status(404).json(
+              {
+                "status": "error",
+                "message": "Order not found"
+              }
+            );
+              //return done(err, null);
+          }else{
+              if(order.status == status.OrderStatus['PLACED'].key){
+                  order.location = newOrder.location;
+                  order.items = newOrder.items;
+                  order.save(function(er) {
+                    if (er){
+                      res.status(500).json(
+                        {
+                          "status": "error",
+                          "message": "Cannot update order."
+                        }
+                      );
+                    }
+                    else
+                      res.json(order);
+                  });
+              }else{
+                  res.status(412).json(
+                    {
+                      "status": "error",
+                      "message": "Order Update Rejected."
+                    }
+                  );
+              }
+          }
     });
 }
 
 //DELETE /order/{order_id} operationId
 function cancelOrder(req, res, next) {
     var order_id = req.swagger.params.order_id.value; //req.swagger contains the path parameters
-    Order.findByIdAndRemove(order_id, function (err, order) {
-        // We'll create a simple object to send back with a message and the id of the document that was removed
-        // You can really do this however you want, though.
-        if(err) {
-          res.status(204).send();
-        }
-        res.json({success: 1, description: "Movie deleted!"});
+    Order.findOne({_id:order_id}, function(err, order){
+          if (err){
+            res.status(404).json(
+              {
+                "status": "error",
+                "message": "Order not found"
+              }
+            );
+              //return done(err, null);
+          }else{
+              if(order == null){
+                res.status(404).json(
+                  {
+                    "status": "error",
+                    "message": "Order not found"
+                  }
+                );
+              }else{
+                if(order.status != status.OrderStatus['PLACED'].key){
+                      res.status(412).json(
+                        {
+                          "status": "error",
+                          "message": "Order Cancel Rejected."
+                        }
+                      );
+                 }else{
+                      order.remove(function(er) {
+                        if(er){
+                          res.status(500).json(
+                            {
+                              "status": "error",
+                              "message": "Cannot cancel order"
+                            }
+                          );
+                        }else{
+                            res.json({"success":1,"description":"Order deleted!"});
+                        }
+                      });
+
+                }
+              }
+          }
     });
 }

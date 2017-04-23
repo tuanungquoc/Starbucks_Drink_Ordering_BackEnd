@@ -188,8 +188,6 @@ definitions:
     required:
         - location
         - links
-      
-      
   GetOrdersListResponse:
     required:
       - orders
@@ -260,8 +258,12 @@ definitions:
       - success
       - description
   ErrorResponse:
-    required:
-      - message
+    type: object
     properties:
+      status:
+        type: string
       message:
         type: string
+    required:
+      - status
+      - message
