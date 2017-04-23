@@ -36,7 +36,7 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/GeneralResponse"
+            $ref: "#/definitions/GetOrderResponse"
         default:
           description: Error
           schema:
@@ -75,7 +75,31 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/GetOrderItemsResponse"
+            $ref: "#/definitions/GetOrderResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      operationId: changeOrder
+      parameters:
+        - name: order_id
+          type: string
+          in: path
+          required: true
+        - name: order
+          in: body
+          description: order properties
+          required: true
+          schema:
+            $ref: "#/definitions/Order"
+      description: change order
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOrderResponse"
         default:
           description: Error
           schema:
@@ -125,6 +149,46 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  GetOrderResponse:
+    type: object
+    properties:
+      location:
+        type: string
+        description: location where you place order
+      items:
+        type: array
+        description: list of order items
+        items:
+          type: object
+          properties:
+            qty:
+              type: number
+              description: quantity of order item
+            name:
+              type: string
+              description: name of order item
+            milk:
+              type: string
+              description: name of type of milk
+            size:
+              type: string
+              description: size of order
+      links:
+        type: object
+        properties:
+          payment: 
+            type: string
+          order: 
+            type: string
+      status:
+        type: string
+      message:
+        type: string
+    required:
+        - location
+        - links
+      
+      
   GetOrdersListResponse:
     required:
       - orders
@@ -182,35 +246,6 @@ definitions:
               description: size of order
     required:
       - location
-  GetOrderItemsResponse:
-    required:
-      - orders
-    properties:
-      # The array of movies
-      orders:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-            location:
-              type: string
-            message:
-              type: string
-            orderitems:
-              type: array
-              items:
-                type: object
-                properties:
-                  qty:
-                    type: number
-                  name:
-                    type: string
-                  milk:
-                    type: string
-                  size:
-                    type: string
   GeneralResponse:
     type: object
     properties:
