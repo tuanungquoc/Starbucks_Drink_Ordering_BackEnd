@@ -1,5 +1,5 @@
 var Enum = require('enum');
 
-var OrderStatus = new Enum(['PLACED', 'TWO', 'THREE'], { freez: true });
+var OrderStatus = new Enum(['PLACED', 'PAID', 'THREE'], { freez: true });
 
 module.exports = {OrderStatus}
