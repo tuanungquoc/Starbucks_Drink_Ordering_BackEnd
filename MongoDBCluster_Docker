@@ -1,0 +1,49 @@
+1. Create a new network called my-mongo-cluster:
+  docker network create my-mongo-cluster
+
+2. Check to see if network is created by:
+  docker network ls
+
+3.  Create 3 nodes in cluster with 1 primary and 2 secondary nodes:
+  docker run -p 30001:27017 --name mongo1 --net my-mongo-cluster mongo mongod --replSet my-mongo-set
+  docker run -p 30002:27017 --name mongo2 --net my-mongo-cluster mongo mongod --replSet my-mongo-set
+  docker run -p 30003:27017 --name mongo3 --net my-mongo-cluster mongo mongod --replSet my-mongo-set
+
+4. Setting up replication:
+  - Log into primary node docker as following:
+      docker exec -it mongo1 mongo
+  - Then inside mongo shell, create the configuration:
+    db = (new Mongo('localhost:27107')).getDB('test')
+    config = {
+        "_id":"my-mongo-set",
+        "members" : [
+            {
+              "_id":0,
+              "host":"mongo1:27107"
+            },
+            {
+              "_id":1,
+              "host":"mongo2:27107"
+            },
+            {
+              "_id":2,
+              "host":"mongo3:27107"
+            }
+        ]
+    }
+
+  - Start replicaset by running:
+      rs.initiate(config)
+
+  - Test:
+    db.mycollection.insert({name:'sample'})
+    db.mycollection.find()
+
+    check on secondary node:
+      db2 = (new Mongo('mongo2:27107')).getDB('test')
+      db2.setSlaveOk()
+      db2.mycollection.find()
+
+
+NOTE: when using Mongoose to replicaSet, it only works on   "mongoose":"4.4.12 ", track issue here:
+https://github.com/Automattic/mongoose/issues/4596
