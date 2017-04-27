@@ -3,6 +3,7 @@ var db = require('../../config/db')();
 var Order = require('../models/order');
 var crypto = require('crypto');
 var status = require('../models/orderstatus');
+var gateway = require('../../config/apigateway')
 // Exports all the functions to perform on the db
 module.exports = {placeOrder, getOrder, cancelOrder,changeOrder};
 
@@ -13,8 +14,8 @@ function placeOrder(req, res, next) {
     myOrder.location = req.body.location;
     myOrder.items = req.body.items;
     myOrder.links = {};
-    myOrder.links.payment = "http://localhost:10010/order/" + myOrder._id + "/pay";
-    myOrder.links.order = "http://localhost:10010/order/" + myOrder._id;
+    myOrder.links.payment = "http://"+gateway.host+":"+gateway.port+"/order/" + myOrder._id + "/pay";
+    myOrder.links.order = "http://"+gateway.host+":"+gateway.port+"/order/" + myOrder._id;
     myOrder.status = status.OrderStatus['PLACED'].key;
     myOrder.message = "Order has been placed";
     //console.log(req.body);
