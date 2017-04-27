@@ -7,6 +7,8 @@ var configDB = require('./config/database.js');
 
 module.exports = app; // for testing
 mongoose.Promise = global.Promise;
+
+
 mongoose.connect(configDB.url); // connect to our database
 
 var config = {
