@@ -26,6 +26,7 @@ function payOrder(req, res, next) {
                      }else{
                       order.status = status.OrderStatus['PAID'].key;
                       order.message = "Payment Accepted.";
+                      order.links.payment = "Test";
                       order.save(function(er) {
                         if (er){
                           res.status(500).json(
@@ -35,7 +36,9 @@ function payOrder(req, res, next) {
                             }
                           );
                         }else
-                          res.json(order);
+                          var payload = JSON.parse(JSON.stringify(order));
+                          delete payload.links.payment;
+                          res.json(payload);
                       });
                     }
                 }

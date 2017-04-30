@@ -19,7 +19,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /order:
+  /SJ/starbucs/order:
     # binds a127 app logic to a route
     x-swagger-router-controller: ordercontroller
     post:
@@ -42,7 +42,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /orders:
+  /SJ/starbucs/orders:
     # binds a127 app logic to a route
     x-swagger-router-controller: orderscontroller
     get:
@@ -60,7 +60,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /order/{order_id}:
+  /SJ/starbucs/order/{order_id}:
     # binds a127 app logic to a route
     x-swagger-router-controller: ordercontroller
     get:
@@ -124,7 +124,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /order/{order_id}/pay:
+  /SJ/starbucs/order/{order_id}/pay:
       # binds a127 app logic to a route
       x-swagger-router-controller: paymentcontroller
       post:
@@ -141,7 +141,7 @@ paths:
           "200":
             description: Success
             schema:
-              $ref: "#/definitions/GetOrderResponse"
+              $ref: "#/definitions/GetOrderPaymentResponse"
           default:
             description: Error
             schema:
@@ -150,6 +150,42 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  GetOrderPaymentResponse:
+    type: object
+    properties:
+      location:
+        type: string
+        description: location where you place order
+      items:
+        type: array
+        description: list of order items
+        items:
+          type: object
+          properties:
+            qty:
+              type: number
+              description: quantity of order item
+            name:
+              type: string
+              description: name of order item
+            milk:
+              type: string
+              description: name of type of milk
+            size:
+              type: string
+              description: size of order
+      links:
+        type: object
+        properties:
+          order: 
+            type: string
+      status:
+        type: string
+      message:
+        type: string
+    required:
+        - location
+        - links
   GetOrderResponse:
     type: object
     properties:
@@ -189,36 +225,9 @@ definitions:
         - location
         - links
   GetOrdersListResponse:
-    required:
-      - orders
-    properties:
-      # The array of movies
-      orders:
-        type: array
-        items:
-          type: object
-          properties:
-            location:
-              type: string
-              description: location where you place order
-            items:
-              type: array
-              description: list of order items
-              items:
-                type: object
-                properties:
-                  qty:
-                    type: number
-                    description: quantity of order item
-                  name:
-                    type: string
-                    description: name of order item
-                  milk:
-                    type: string
-                    description: name of type of milk
-                  size:
-                    type: string
-                    description: size of order
+    type: array
+    items:
+      $ref: "#/definitions/GetOrderResponse"
   Order:
     type: object
     properties:
