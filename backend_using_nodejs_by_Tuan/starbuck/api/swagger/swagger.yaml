@@ -19,7 +19,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /SJ/starbucs/order:
+  /SJ/starbucks/order:
     # binds a127 app logic to a route
     x-swagger-router-controller: ordercontroller
     post:
@@ -42,7 +42,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /SJ/starbucs/orders:
+  /SJ/starbucks/orders:
     # binds a127 app logic to a route
     x-swagger-router-controller: orderscontroller
     get:
@@ -60,7 +60,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /SJ/starbucs/order/{order_id}:
+  /SJ/starbucks/order/{order_id}:
     # binds a127 app logic to a route
     x-swagger-router-controller: ordercontroller
     get:
@@ -124,7 +124,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /SJ/starbucs/order/{order_id}/pay:
+  /SJ/starbucks/order/{order_id}/pay:
       # binds a127 app logic to a route
       x-swagger-router-controller: paymentcontroller
       post:

@@ -47,7 +47,11 @@ function getOrder(req, res, next) {
                     }
                   );
                 }else{
-                    res.json(order);
+                    var payload = JSON.parse(JSON.stringify(order));
+                    if(order.status != status.OrderStatus['PLACED'].key){
+                      delete payload.links.payment;
+                    }
+                    res.json(payload);
                 }
 
     });
